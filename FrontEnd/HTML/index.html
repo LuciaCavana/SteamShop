@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Biblioteca de Steam</title>
+    <link rel="stylesheet" href="../Styles/styles.css">
+</head>
+<body>
+    <h1>Biblioteca de Steam</h1>
+
+    <!-- 🔥 Necesario para mostrar el total -->
+    <h2 id="precioTotal">Calculando valor total...</h2>
+
+    <div id="games" class="grid"></div>
+
+    <script>
+        const STEAM_ID = "76561198827572702";
+
+        async function cargarJuegos() {
+            try {
+                const url = `http://localhost:3000/steam/${STEAM_ID}`;
+
+                const res = await fetch(url);
+                const data = await res.json();
+
+                const juegos = data.response.games || [];
+                const contenedor = document.getElementById("games");
+
+                juegos.forEach(juego => {
+                    const img = `https://cdn.cloudflare.steamstatic.com/steam/apps/${juego.appid}/header.jpg`;
+
+                    const card = `
+                        <div class="card">
+                            <img src="${img}" alt="img">
+                            <div class="name">${juego.name}</div>
+                            <div class="small">AppID: ${juego.appid}</div>
+                            <div class="small">Horas jugadas: ${(juego.playtime_forever / 60).toFixed(1)}</div>
+                        </div>
+                    `;
+
+                    contenedor.innerHTML += card;
+                });
+
+            } catch (error) {
+                console.error("Error cargando juegos:", error);
+            }
+        }
+
+        async function cargarPrecioTotal() {
+            try {
+                const resp = await fetch(`http://localhost:3000/steam/${STEAM_ID}/precios`);
+                const data = await resp.json();
+
+                document.getElementById("precioTotal").innerText =
+                    "Valor total: USD " + data.total;
+
+            } catch (error) {
+                console.error("Error obteniendo precios:", error);
+                document.getElementById("precioTotal").innerText =
+                    "No se pudo calcular el valor total.";
+            }
+        }
+
+        // 🚀 Ejecutar ambas funciones al cargar
+        cargarJuegos();
+        cargarPrecioTotal();
+    </script>
+</body>
+</html>
