@@ -1,6 +1,7 @@
 const STEAM_IDS = [
   "76561198827572702",
-  "76561198161382037"
+  "76561198161382037",
+  "76561199191953345"
 ];
 
 const sellers = ["DarkWolf", "LunaStore", "CelestialTrade", "NovaSeller"];
@@ -40,7 +41,7 @@ async function cargarDatos() {
     const data = await Promise.all(STEAM_IDS.map(id => obtenerDatos(id)));
 
     for (let i = 0; i < 4; i++) {
-      const d = data[i % 2]; // alterna perfil1 → perfil2 → perfil1 → perfil2
+      const d = data[i % STEAM_IDS.length]; // alterna perfil1 → perfil2 → perfil1 → perfil2
 
       const card = document.createElement("div");
       card.className = "steam-card";
